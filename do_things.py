@@ -1,3 +1,7 @@
+"""
+This script takes up to to command line arguments
+"""
+
 import filecmp
 import re
 import argparse
