@@ -12,6 +12,7 @@ import ecdsa
 import binascii
 import hashlib
 import base58
+import argparse
 
 
 def main():
@@ -50,17 +51,25 @@ def main():
 
     # Obtain signature:
     sha = hashlib.sha256()
-    sha.update( bytearray.fromhex(key_hash) )
+    sha.update(bytearray.fromhex(key_hash) )
     checksum = sha.digest()
     sha = hashlib.sha256()
     sha.update(checksum)
-    checksum = sha.hexdigest()[0:8]
+    checksum = sha.hexdigest()[:4]
 
     print("checksum = \t{}".format(sha.hexdigest()))
     print("key_hash + checksum = \t{}".format(key_hash + ' ' + checksum))
-    key_cksum = str(key_hash + checksum)
+    key_cksum = key_hash + checksum
     print("key_cksum: ".format(key_cksum))
-    print("bitcoin address = \t" + base58.b58encode(bytes(bytearray.fromhex(key_cksum))))
+    print("bitcoin address = \t{}".format(base58.b58encode(bytes(bytearray.fromhex(key_cksum)))))
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(description='Takes a private key as input.')
+    parser.add_argument('-p', '--private_key', required=True, type=str,
+                        help='64 byte hexadecimal number.')
+    args = parser.parse_args()
+    return args
 
 
 def hash160(hex_str):
@@ -73,4 +82,5 @@ def hash160(hex_str):
 
 
 if __name__ == '__main__':
+    args = parse_args()
     main()
